@@ -16,7 +16,7 @@ class TestObject:
       <interface name='com.nstack.DbusTest'>
         <method name='Ping'>
           <arg type='ay' name='input' direction='in'/>
-          <arg type='d' name='output' direction='out'/>
+          <arg type='t' name='output' direction='out'/>
         </method>
       </interface>
     </node>
@@ -26,8 +26,8 @@ class TestObject:
         pass
 
     def Ping(self, data):
-        size = len(data) / 1000000
-        print("PING: data size (MB) - {0:.2f}".format(size))
+        size = len(data)
+        print("PING: data size (MB) - {0:.2f}".format(size/1000000))
         return size
 
 

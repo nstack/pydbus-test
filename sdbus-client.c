@@ -8,7 +8,7 @@ int main(int argc, char *argv[]) {
         sd_bus_message *out_msg = NULL;
         sd_bus_message *in_msg = NULL;
         sd_bus *bus = NULL;
-        double result;
+        uint64_t result;
         int r;
         
         
@@ -18,9 +18,10 @@ int main(int argc, char *argv[]) {
         }
 
         uint64_t in_arr_size = strtoul(argv[1], NULL, 0);
-        uint8_t in_arr[in_arr_size];
-        fprintf(stdout, "Sending PING - %" PRIu64 "\n", in_arr_size);
-
+        // uint8_t in_arr[in_arr_size];
+        uint8_t *in_arr = NULL;
+        in_arr = calloc(in_arr_size, sizeof(uint64_t));
+        printf("Sending PING - %" PRIu64 "\n", in_arr_size);
 
         /* Connect to the user bus */
         r = sd_bus_open_user(&bus);
@@ -34,7 +35,6 @@ int main(int argc, char *argv[]) {
                                "/com/nstack/DbusTest",          /* object path */
                                "com.nstack.DbusTest",   /* interface name */
                                "Ping");                          /* method name */
-
         if (r < 0) {
                 fprintf(stderr, "Failed to create new method call: %s\n", error.message);
                 goto finish;
@@ -46,22 +46,19 @@ int main(int argc, char *argv[]) {
                 goto finish;
         }
 
-        sd_bus_call(bus, in_msg, 0, &error, &out_msg);
-
+        r = sd_bus_call(bus, in_msg, 0, &error, &out_msg);
         if (r < 0) {
                 fprintf(stderr, "Failed to issue method call: %s\n", error.message);
                 goto finish;
         }
 
-
-        /* Parse the in_msg message */
-        r = sd_bus_message_read(out_msg, "d", &result);
+        r = sd_bus_message_read(out_msg, "t", &result);
         if (r < 0) {
                 fprintf(stderr, "Failed to parse in_msg message: %s\n", strerror(-r));
                 goto finish;
         }
 
-        printf("PONG - %lg\n", result);
+        printf("PONG - %" PRIu64 "\n", result);
 
 finish:
         sd_bus_error_free(&error);

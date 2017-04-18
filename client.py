@@ -20,7 +20,7 @@ def main():
 
     print("Sending ping - {}".format(args.param))
     output = server_proxy.Ping(bytes(args.param))
-    print("Received pong - {0:.2f}".format(output))
+    print("Received pong - {}".format(output))
 
     return 0
 
